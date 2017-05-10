@@ -1,0 +1,7 @@
+create table stu(
+id int,
+name char(2) unique,
+);
+insert into stu values (4,'ab');
+insert into stu values (5,'ab');
+select * from stu ;
