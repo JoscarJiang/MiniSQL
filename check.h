@@ -1,3 +1,12 @@
+/*
+ * The file is for operation of index
+ *
+ *
+ *
+ *
+ */
+
+
 #ifndef CHECK_H
 #define CHECK_H
 
