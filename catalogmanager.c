@@ -58,7 +58,7 @@ int GetIID(char* name){ // 若不存在此索引，返回-1
 }
 #endif
 
-int AllocIID(char* name){ // 使用此函数前请自行用GetIID确认不存在此索引，使用后请自行立即在indices.bin中写入相关信息 
+int AllocateIID(char* name){ // 使用此函数前请自行用GetIID确认不存在此索引，使用后请自行立即在indices.bin中写入相关信息 
 
 	int fs = GetFileSize11("indexID.bin");
 	int marksize = fs / I_LENGTH + 1;
@@ -148,7 +148,8 @@ char GetAID(int TID, char* name){ // 确保TID正确。
 				}
 						free(bufin);
 				return -1;
-			}else{
+			}
+			else{
 				collector += unit; 
 			}
 //		line+=unit * howmany; 写错在这里发生了奇怪的错，debug了5个小时。不知为何readBuf[1]中的内容，当TID==210时，会在此函数内被改变。按理说应该不会
@@ -229,33 +230,19 @@ void DropIndex(char* in){ // in = Index Name
 	printf("Index dropping succeeds!\n");
 }
 
-
-// suspect: GetAID 
-void CreateIndex(char* in, char* tn, char* an, char force){
-	if((!force) && strlen(in)>=4)
+int ifexist(char* in, char *tn, char* an, char force){
+		if((!force) && strlen(in)>=4)
 		if(in[0]=='_' && in[1]=='P' && in[2]=='K' && in[3]=='_'){
 			printf("Index creation fails.  Do not begin with '_PK_'.\n");
-			return;
+			return -1;
 		}
-//	GetAID(0,"ID");
-//	GetIID(in);
+		
 	int IID = GetIID(in);
-
-//#if 0	
 	if(IID!=-1){
 		printf("Index creation fails. Name used.\n");
-		return;
+		return -1;
 	}
-// 验证存在此表，表中存在此属性，此属性为unique 
-	int TID = GetTID(tn);
-
-//	printf("tn:%s\n",tn);
-	if(TID==-1){
-		printf("Index creation fails.  No such table.\n");
-//		exit(0);
-		return;
-	}
-
+	
 	int AID;
 	char ifpk;
 	char ifunique;
@@ -267,32 +254,50 @@ void CreateIndex(char* in, char* tn, char* an, char force){
 	
 	if(res&0x20){
 		printf("Index creation fails.  No such attribute. \n");
-		return;
+		return -1;
 	}
 	if(!ifunique){
 		printf("Index creation fails.  The attribute shall be unique.\n");
-		return;
+		return -1;
 	}
 	int ex = FindIID(TID,AID);
 	if(ex!=-1){
 		printf("Index creation fails.  Index on that attribute has been created.\n");
-		return; 
+		return -1; 
+	}
+	return 1;
+}
+// suspect: GetAID 
+void CreateIndex(char* in, char* tn, char* an, char force){
+
+	int IID = GetIID(in);
+	int TID = GetTID(tn);// 验证存在此表，表中存在此属性，此属性为unique
+	int AID;
+	char ifpk;
+	char ifunique;
+	char res = GetAID(TID,an);
+	
+	AID = res & 0x1f;
+	ifpk = res>>7;
+	ifunique = (res>>6) & 1;
+	
+    test=ifexist(in, tn, an, force);
+	if(test==-1){
+		printf("Alredy exist or no such attribute");
+		return;
 	}
 
-	IID = AllocIID(in);
-//		printf("tid:%d iid:%d aid:%d\n",TID,IID,res);
-
+	IID = AllocateIID(in);
 	WriteIMeta(IID,TID,AID,ifpk&&force);
 	char in2[20] = "index";
 	sprintf(in2+5,"%d",IID);
 	strcat(in2,".bin");
-//	printf("in=%s\n",in);
 
 	char tbin[20] = "table";
 	sprintf(tbin+5,"%d",TID);
 	strcat(tbin,".bin");
 
-if(!force){ // 用户要求建立索引，此时已有表元信息 
+    if(!force){ // 用户要求建立索引，此时已有表元信息
 	ReWrite(in2,in,0);
 	int line = 0;
 	char* table = (char*)malloc(1024);	
@@ -326,9 +331,7 @@ if(!force){ // 用户要求建立索引，此时已有表元信息
 		}
 		line += unit * howmany;
 	}while(size == BUFFER_SIZE); 	
-//
-//PPIL(lines);
-//PPPVL(alldata);
+
 
 #if BP_OK
 	BpBuild(IID,type,asize,lines,alldata);
@@ -337,12 +340,10 @@ if(!force){ // 用户要求建立索引，此时已有表元信息
 	alldata= PVoidListDestroy(alldata);
 	free(table);
 	free(bufin);
-}else
-
-{
-	ReWrite(in2,in,0);
-}
-//#endif
+    }
+    else{
+        ReWrite(in2,in,0);
+    }
 	printf("Index creation succeeds!  IID = %d.\n",IID);
 
 }
@@ -405,7 +406,7 @@ printf("\n");
 	return -1;
 }
 
-int AllocTID(char* name){
+int AllocateTID(char* name){
 
 //	printf("in ALLOCTID, fp = %d\n",fp);
 	int fs = GetFileSize11("tableID.bin"); // 返回-1？？？ 
@@ -481,7 +482,7 @@ void CreateTable(MetaTable T){
 		printf("Table creation fails.  Table name used.\n");
 		return;
 	}
-	TID = AllocTID(T->tn);
+	TID = AllocateTID(T->tn);
 #if DETAIL
 	printf("CreateTable: Allocated TID = %d",TID);
 	printf("\n");
@@ -570,23 +571,7 @@ void DeleteTMeta(short TID){
 	}while(size==BUFFER_SIZE);
 }
 
-void DropTable(char* tn){
-#if DETAIL
-	printf("DropTable(): enter, tn = %s",tn);
-	printf("\n");
-#endif
-	int TID = GetTID(tn);
-	if(TID==-1){
-		printf("Table dropping fails.  No such table.\n");
-		return;
-	}
-	DeleteTMeta(TID);
-	DeleteTIDMeta(TID);
-#if DETAIL
-	printf("DropTable(): Meta deletion fullfills. TID = %d",TID);
-	printf("\n");
-#endif
-
+void DroptheTable(char* tn,int TID){
 	IntList il4ILine = 0;
 	IntList il4IID = 0; 
 	IntList il4IIDLine = 0;
@@ -657,6 +642,27 @@ void DropTable(char* tn){
 
 	free(bufin);
 	printf("Table dropping succeeds!\n");
+}
+
+void DropTable(char* tn){
+#if DETAIL
+	printf("DropTable(): enter, tn = %s",tn);
+	printf("\n");
+#endif
+	int TID = GetTID(tn);
+	if(TID==-1){
+		printf("Table dropping fails.  No such table.\n");
+		return;
+	}
+	DeleteTMeta(TID);
+	DeleteTIDMeta(TID);
+#if DETAIL
+	printf("DropTable(): Meta deletion fullfills. TID = %d",TID);
+	printf("\n");
+#endif
+    
+    DroptheTable(tn,TID);
+	
 }
 
 void GetTable(short TID, char* table){
