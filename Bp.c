@@ -161,7 +161,6 @@ BpNode find(BpNode Bpt, unsigned char type, void* V, BpNode parent[])//已经修改
 			if (type == 3){
 				if (strcmp((char*)V, (char*)(C->K[i])) <= 0) break;
 			}
-			
 		}
 		//如果没有这样的i
 		if (i + 1 > 14)
@@ -188,7 +187,6 @@ BpNode find(BpNode Bpt, unsigned char type, void* V, BpNode parent[])//已经修改
 
 	return C;
 }
-
 
 // 把K和指向文件的指针插入到B+树中 
 BpNode insert_into_index(BpNode BpTree, unsigned char type, void* K, int lines)//传入K的地址
@@ -402,7 +400,7 @@ BpNode insert_in_leaf(BpNode L, unsigned char type, void* K, int lines)
 			for (j = i; j>0; j--)
 			{
 				L->K[j] = L->K[j - 1];
-				L->File_P[j]->lines = L->File_P[j - 1]->lines;/////////////////
+				L->File_P[j]->lines = L->File_P[j - 1]->lines;
 				//L->File_P[j] = L->File_P[j - 1];
 			}
 			L->K[0] = K;//void*的赋值
@@ -907,7 +905,6 @@ void BpDestroy(BpNode BpTree, int IID, unsigned char type, unsigned char size)
 	}
 }
 
-
 //向IntList中插入数据 插到链表头
 IntList insert_il(IntList List, int X)
 {
@@ -936,9 +933,6 @@ void print(IntList List)
 		List = List->next;
 	}
 }
-
-
-
 
 int BpEqual(int IID, unsigned char type, unsigned char size, void* value)//value 改为 ElementType ， 本来是void*
 {
@@ -1020,9 +1014,6 @@ int BpEqual(int IID, unsigned char type, unsigned char size, void* value)//value
 	
 }
 
-
-
-
 //将index6.bin读出的Bplus树中，所有数据值小于value的对应的行号存入整数链表il中，返回il。
 IntList BpLess(int IID, unsigned char type, unsigned char size, void* value, IntList il)
 {
@@ -1087,7 +1078,6 @@ IntList BpLess(int IID, unsigned char type, unsigned char size, void* value, Int
 		if (fread(buffer, 4096, 1, fp) == 0) { fclose(fp); return il; }
 	}
 }
-
 
 IntList BpLessEqual(int IID, unsigned char type, unsigned char size, void* value, IntList il)
 {
@@ -1394,7 +1384,6 @@ IntList BpMore(int IID, unsigned char type, unsigned char size, void* value, Int
 
 }
 
-
 void BpInsert(int IID, unsigned char type, unsigned char size, int line, void* values)
 {
 	printf("Enter BPI with IID %d, type %d, size %d, line %d, values %d\n",IID,type,size,line,*(int*)values);
@@ -1514,4 +1503,3 @@ void BpInsert(int IID, unsigned char type, unsigned char size, int line, void* v
 // filename sprintf
 
 // 新增了一个结构体 voidList
-
