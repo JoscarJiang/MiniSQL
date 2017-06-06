@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-int GetIID(char* name){ // 若不存在此索引，返回-1 
+int GetIID(char* name){ // 若不存在此索引，返回-1
 	char bufin[BUFFER_SIZE];
 	int line = 0;
 //	int sizes=2000 * 64;
