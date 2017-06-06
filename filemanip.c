@@ -1,4 +1,6 @@
+#define _CRT_SECURE_NO_WARNINGS 1
 #include"filemanip.h"
+
 
 int GetFileSize11(char* filename){
 

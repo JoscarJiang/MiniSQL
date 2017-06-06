@@ -8,6 +8,6 @@ IntList IntListInsert(IntList il, int x);
 IntList IntListDestroy(IntList il);
 IntList IntListDeleteNode(IntList, IntList);
 PVoidList PVoidListDestroy(PVoidList pvl);
-PVoidList PVoidListInsert(char*, int, PVoidList,char);
+PVoidList PVoidListInsert(char*, int, PVoidList, char);
 
 #endif

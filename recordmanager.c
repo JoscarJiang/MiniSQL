@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_WARNINGS 1
 #include "recordmanager.h"
 #include "catalogmanager.h"
 #include "buffermanager.h"

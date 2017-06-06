@@ -1,7 +1,8 @@
-#include<stdio.h>
+#define _CRT_SECURE_NO_WARNINGS 1
+
 #include<stdlib.h>
 #include<string.h>
-#include<unistd.h>
+#include"unistd.h"
 
 #include"macro.h"
 #include"structs.h"
@@ -44,7 +45,7 @@ int starlight(char* in)
 float tobefloat(char* a)
 {
   int n,num,power;
-  float m;
+  float m = 0.0;
   n=strlen(a);
   power=0;
   for(num=0;num<n;num++)
@@ -80,6 +81,7 @@ int main(){ // To Test BpBuild
 }
 #endif
 #if 1
+
 int main()
 {
 	FILE* fope = fopen("tableID.bin","wb");fclose(fope);
