@@ -1,7 +1,7 @@
 #ifndef CATALOGMANAGER_H
 #define CATALOGMANAGER_H
 #include "structs.h"
-
+#include "filemanip.h"
 int GetIID(char* name);
 
 int AllocIID(char* name);

@@ -3,9 +3,10 @@ Bplus树的结构自行设计。index0.bin的存储格式自行设计。可完成两者的转化即可。
 建议：固定每个node大小4096B，每个node存15个value（因为每个数据项最大可能的字节是255），每个指针需要附加信息指明：是否有效、指向另一个节点还是文件。 
 
 要求提供如下函数： 
+
 // type约定: 00 int, 01 float, 11 char(n) 
 void BpBuild(int IID, unsigned char type, unsigned char size, IntList lines, IntList values);
-void BpDestroy(int IID, unsigned char type, unsigned char size);
+void BpDestroy(BpNode Bptree, int IID, unsigned char type, unsigned char size);
 void BpInsert(int IID, unsigned char type, unsigned char size, int line, void* value);
 // 不需要删除操作 
 IntList BpLess(int IID, unsigned char type, unsigned char size, void* value, IntList il);
@@ -123,7 +124,7 @@ void BpBuild(int IID, unsigned char type, unsigned char size, IntList lines, PVo
 };
 #endif
 
-#define _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS 1
 
 #include <stdio.h>
 #include <stdlib.h>

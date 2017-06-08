@@ -80,7 +80,7 @@ int GetReadBuffer(char* FileName, int line){ // ·µ»ØÊý¾Ý´æ½øÁË16¸öreadbufferÖÐµÄ
 	}
 }
 
-int Append(char* fn, char* data, int size){ // ÔÚfnÎÄ¼þÄ©Î²£¬´Ódata¿ªÊ¼Ôö¸½size¸ö×Ö½Ú
+void Append(char* fn, char* data, int size){ // ÔÚfnÎÄ¼þÄ©Î²£¬´Ódata¿ªÊ¼Ôö¸½size¸ö×Ö½Ú
 	memset(writeBuf->data,0,BUFFER_SIZE);
 	int k;
 	int round = 0;
@@ -103,17 +103,17 @@ int Read(char* fn, int line, char* bufin){ // ÔÚfnÎÄ¼þµÚlineÐÐ¿ªÊ¼¶ÁÊý¾Ý£¬¶Áµ½bu
 
 	int rbf = GetReadBuffer(fn,line);
 
-	if(rbf==-1)return -1;
+	if(rbf==-1)return -1;//not found
 	int i;
 	for(i=0;i<16;i++){
-		if(rbf== (pb->data - readBuf[0]) / BUFFER_SIZE){
+		if(rbf == (pb->data - readBuf[0]) / BUFFER_SIZE){
 			size = pb->size;
 			break;
 		} 
 		pb = pb->next;
 	}
 	for(i=0;i<size;i++){
-		bufin[i] = readBuf[rbf][i];
+		bufin[i] = readBuf[rbf][i];//rbfÊÇbufferµÄ±àºÅ£¬iÊÇÄÚÈÝ
 	}
 	return size;
 }
@@ -189,7 +189,7 @@ void DeleteLine(char* fn, int line, int unit, int howmany){ // ´Óµ×²¿³éÉÏÀ´¡£»áÂ
 		j++;
 	}
 	Write(fn,line,writeinfo,thissize); 
-	truncate(fn,fs-thissize);
+	_chsize(fs, fs - thissize);
 	if(howmany>BUFFER_SIZE) DeleteLine(fn,line+BUFFER_SIZE,unit,howmany-thissize);
 }
 

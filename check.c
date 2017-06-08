@@ -4,6 +4,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#define _CRT_SECURE_NO_WARNINGS 1
+/*
+function:check the containment of indexID.bin
+*/
 void PPI(){ // 用于查看indexID.bin中存储的内容。建议结合二进制文件察看器，避免0x0d 
 	FILE* fp = fopen("indexID.bin","rb");
 	int sh;

@@ -1,6 +1,8 @@
+#define _CRT_SECURE_NO_WARNINGS 1
 #include "recordmanager.h"
 #include "catalogmanager.h"
 #include "buffermanager.h"
+
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -848,7 +850,7 @@ void InsertIntoValues(char* tn, Values v){
 	// 在所有涉及此表的索引中增加一个value 
 	trial = v;
 	int a = 0;
-	int lastline;
+	//int lastline;
 	int fs = GetFileSize11(tbin);
 
 	while(trial){
