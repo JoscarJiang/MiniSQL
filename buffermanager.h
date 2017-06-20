@@ -1,16 +1,44 @@
-#ifndef BUFFERMANAGER_H
-#define BUFFERMANAGER_H
-#include "structs.h"
+#ifndef BufferManager_H
+#define BufferManager_H
+#include "Minisql.h"
+#include <stdio.h>
 
-void DoAppend(char* fn);  // 将写缓冲区的文件附加到文件后 
-int GetReadBuffer(char* FileName, int line); // 返回数据存进了16个readbuffer中的哪一个 ，若已到文件尾部，则返回-1 
-int Append(char* fn, char* data, int size); // 在fn文件末尾，从data开始增附size个字节
-int Read(char* fn, int line, char* bufin); // 在fn文件第line行开始读数据，读到bufin中，返回值是读了多少字节，最多BUFFER_SIZE，若-1表示已经无内容 
-void BufsInit();
-void Write(char* fn,int line, char* data, int size); // 需要改成从形式上，经过了write buffer 
-void DeleteLine(char* fn, int line, int unit, int howmany);
-void DeleteLines(char* fn, IntList il, int unit);
-void ReWrite(char* fn, char* data, int size);
+class BufferManager
+{
+private:
+	fileNode *fileHead;
+	fileNode file_pool[MAX_FILE_NUM];
+	blockNode block_pool[MAX_BLOCK_NUM];
+	int total_block;//姝ｅ湪浣跨敤鐨勫潡
+	int total_file;
+	static const int BLOCK_SIZE = 4096;
+	//鍑芥暟閮ㄥ垎
+	void init_block(blockNode & block);
+	void init_file(fileNode & file);
+	blockNode* getBlock(fileNode* file, blockNode* position, bool pin = false);
+	void writtenBackToDiskAll();
+	void writtenBackToDisk(const char* fileName, blockNode* block);
+	void clean_dirty(blockNode & block);
+	void addBlocktoList(fileNode* file,blockNode* position, blockNode* btmp);
+	blockNode* replaceBlock();
+	size_t getUsingSize(blockNode* block);
+public:
+	BufferManager();
+	~BufferManager();
+	void delete_fileNode(const char* fileName);
+	fileNode* getFile(const char* fileName, bool pin = false);
+	void set_dirty(blockNode& block);
+	void set_pin(blockNode& block, bool pin);
+	void set_pin(fileNode& file, bool pin);//閲嶈浇
+	void set_usingSize(blockNode& block, size_t usage);
+	size_t get_usingSize(blockNode& block);
+	char* get_content(blockNode& block);
+	static int getBlockSize();
 
+	blockNode* getNextBlock(fileNode* file, blockNode* block);
+	blockNode* getBlockHead(fileNode* file);
+	blockNode* getBlockByOffset(fileNode* file, int offsetNumber);
+};
 #endif
+
 

@@ -1,40 +1,41 @@
 #ifndef CATALOGMANAGER_H
 #define CATALOGMANAGER_H
-#include "structs.h"
 
-int GetIID(char* name);
+#include <string>
+#include <vector>
+#include "Attribute.h"
+#include "BufferManager.h"
+#include "IndexManager.h"
+using namespace std;
+class CatalogManager {
+public:
+    BufferManager bm;
+    CatalogManager();
+    virtual ~CatalogManager();
 
-int AllocIID(char* name);
+    int dropTable(string tableName);
+    int dropIndex(string index);
 
-void WriteIMeta(int IID, short TID, short AID, char fixed);
+    int addIndex(string indexName,string tableName,string attributeName,int type);
+    int revokeIndexOnAttribute(string tableName,string AttributeName,string indexName);
+    int findTable(string tableName);
+    int findIndex(string indexName);
 
-char GetAID(int TID, char* name);
+    int deleteValue(string tableName, int deleteNum);// delete the number of record
+    int insertRecord(string tableName, int recordNum);  // increment the number of record
+    int getRecordNum(string tableName);
+    int indexNameListGet(string tableName, vector<string>* indexNameVector);
+    int getAllIndex(vector<IndexInfo> * indexs);
+    int setIndexOnAttribute(string tableName,string AttributeName,string indexName);
+    int addTable(string tableName, vector<Attribute>* attributeVector, string primaryKeyName ,int primaryKeyLocation );
+    int getIndexType(string indexName);
+    int attributeGet(string tableName, vector<Attribute>* attributeVector);
+    int calcuteLenth(string tableName);
+    int calcuteLenth2(int type);
+    void recordStringGet(string tableName, vector<string>* recordContent, char* recordResult);
+};
 
-int DeleteIMeta(int IID);
 
-void DeleteIIDMeta(int IID);
 
-void DropIndex(char* in);
-
-void CreateIndex(char* in, char* tn, char* an, char force);
-
-int FindIID(int TID, int AID);
-
-int GetTID(char* name);
-
-int AllocTID(char* name);
-
-void WriteTMeta(short TID, MetaTable T);
-
-void CreateTable(MetaTable T);
-
-void DeleteTIDMeta(short TID);
-
-void DeleteTMeta(short TID);
-
-void DropTable(char* tn);
-
-void GetTable(short TID, char* table);
 
 #endif
-
